@@ -30,5 +30,5 @@ jobs:
         run: python -m pip install -r requirements.txt pytest ruff
       - name: Lint (ruff core rules)
         run: python -m ruff check . --select E4,E7,E9,F
-      - name: Tests (offline; the golden check needs the data branch and is skipped)
+      - name: Tests (offline)
         run: python -m pytest -q

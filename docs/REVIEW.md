@@ -148,7 +148,7 @@ Not changed, because fixing them changes existing outputs or needs a design choi
 
 ### Safety net (Step 2)
 
-* `tests/` (165 tests, offline, ~110 s): fixture files in NSE's real formats (old and UDiFF
+* `tests/` (163 tests, offline, ~110 s): fixture files in NSE's real formats (old and UDiFF
   bhavcopy, sec_bhavdata_full, MTO, ind_close_all, PR bc file), a synthetic market built through
   the real ingest/adjust/breadth code (split, bonus announced under an old symbol, rename,
   delisting, SME issue, SME->main migration, shared symbol, renamed index), a fake NSE server for
@@ -156,7 +156,8 @@ Not changed, because fixing them changes existing outputs or needs a design choi
   CLI exit codes) and a scripted HTTP session for the scraper (retries, 404 window, throttling).
   `tests/_repoint.py` redirects every data path to a temp dir without touching production code;
   any real HTTP request fails the test.
-* Golden outputs: `tests/golden/golden.py` digests 29 calls (load_wide/load_data/load_symbol for
+* Golden outputs (used during this review; removed from the repo afterwards at the owner's
+  request): digests of 29 calls (load_wide/load_data/load_symbol for
   20 current, renamed, delisted and SME symbols and for the whole universe, indices incl. the old
   index name, breadth, actions, symbol master, adj_factor recomputed for all 4,583 securities, a
   full `compute_breadth`) on `data` commit `fcb3714`. Recomputing adj_factor from the actions table
@@ -239,8 +240,7 @@ Notes
   29 of the columns of `load_wide("close", start_date="2024-01-01")`, all demerged), the actions
   table, the recomputed factors and breadth (5,214 of 5,407 days, because the A/D line and new-high
   counts are cumulative). Raw prices, indices and the symbol master are unchanged. On the
-  unmigrated snapshot all 29 digests still match; re-record them after publishing a migrated
-  snapshot.
+  unmigrated snapshot all 29 digests still match.
 * Unchanged existing warning: KMSUGAR's manual 2010 split (stock suspended across the ex-date)
   fails the continuity check with the snapshot's own table too; it is reported again when the
   migration re-verifies KMSUGAR (demerger 2026-10-01).
@@ -265,8 +265,8 @@ copy: HEALTHY, exit 0 (3 trading days not yet synced, as expected for a 2026-10-
 
 ### Final state (Step 6)
 
-* `python -m pytest -q`: 164 passed, 1 skipped (the golden test without `NSE_GOLDEN_DATA`).
-* Golden check on `fcb3714`: all 29 digests match.
+* `python -m pytest -q`: 163 passed.
+* Golden check on `fcb3714` (last run before it was removed): all 29 digests match.
 * `ruff check .` (0.16.9): core E4/E7/E9/F 2 -> 0; tests clean. Total on the modules 194 -> 208:
   +6 UP006 / +9 UP045 annotation-style (new code follows the modules' `typing.Optional`/`List`
   style), +1 BLE001 (`IndexStore` keeps the old broad `except Exception` semantics), -2 F401.

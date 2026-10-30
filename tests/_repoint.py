@@ -1,4 +1,4 @@
-"""Point every data path of the project at another directory, for tests and golden checks.
+"""Point every data path of the project at another directory, for tests.
 
 config.py builds all paths from DATA_DIR at import time and several modules copy them into
 their own globals (`from config import STORE_DIR`) or into default arguments
